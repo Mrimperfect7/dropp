@@ -6,7 +6,7 @@ import { clearCart, useShop } from "@/lib/shop-store";
 
 export default function CheckoutPage() {
   const { cart, subtotal, shipping, total } = useShop();
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -140,11 +140,6 @@ Please confirm my order!`;
                 <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${paymentMethod === 'card' ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <input type="radio" name="payment" value="card" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300" />
                   <span className="ml-3 font-medium text-gray-900">Credit / Debit Card</span>
-                </label>
-                
-                <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${paymentMethod === 'cod' ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                  <input type="radio" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300" />
-                  <span className="ml-3 font-medium text-gray-900">Cash on Delivery (COD)</span>
                 </label>
               </div>
             </section>
