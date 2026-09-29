@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProducts } from "@/app/actions";
+import type { Product } from "@/types/product";
 
 export default async function StoreHomepage() {
   const allProducts = await getProducts();
@@ -72,7 +73,7 @@ export default async function StoreHomepage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {featuredProducts.map((product) => (
+          {featuredProducts.map((product: Product) => (
             <Link key={product.id} href={`/product/${product.id}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 border border-gray-100">
               <div className="relative aspect-square overflow-hidden bg-gray-100">
                 <img 

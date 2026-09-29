@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { getProducts } from "@/app/actions";
 import { notFound } from "next/navigation";
+import type { ProductSpecification } from "@/types/product";
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   // Fetch real products from our JSON DB and find by ID (slug)
   const allProducts = await getProducts();
-  const product = allProducts.find((p: any) => p.id === params.slug);
+  const product = allProducts.find((p) => p.id === params.slug);
   
   if (!product) {
     notFound();
@@ -49,7 +50,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
               <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
             </div>
             <div className="grid grid-cols-4 gap-4">
-              {product.images.map((img, idx) => (
+              {product.images.map((img: string, idx: number) => (
                 <div key={idx} className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 ${idx === 0 ? 'border-indigo-600' : 'border-transparent'}`}>
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </div>
@@ -66,7 +67,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <div className="flex items-center space-x-4 mt-4">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className={`text-xl ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                  <span key={i} className={`text-xl ${i < Math.floor(product.rating ?? 0) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
                 ))}
               </div>
               <span className="text-sm font-medium text-indigo-600 hover:underline cursor-pointer">
@@ -92,7 +93,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
             {/* Key Benefits */}
             <div className="mt-8 space-y-3">
-              {product.benefits.map((benefit, idx) => (
+              {product.benefits.map((benefit: string, idx: number) => (
                 <div key={idx} className="flex items-start">
                   <span className="text-green-500 mr-3 text-lg">✓</span>
                   <span className="text-gray-700 font-medium">{benefit}</span>
@@ -125,7 +126,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         <div className="mt-16 border-t border-gray-200 pt-16">
           <h2 className="text-2xl font-black text-gray-900 mb-8">Specifications</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {product.specifications.map((spec, idx) => (
+            {product.specifications.map((spec: ProductSpecification, idx: number) => (
               <div key={idx} className="flex justify-between py-3 border-b border-gray-100">
                 <span className="text-gray-500">{spec.label}</span>
                 <span className="font-medium text-gray-900">{spec.value}</span>

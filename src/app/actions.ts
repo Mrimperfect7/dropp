@@ -3,14 +3,15 @@
 import fs from 'fs';
 import path from 'path';
 import { revalidatePath } from 'next/cache';
+import type { Product } from '@/types/product';
 
 const getFilePath = () => path.join(process.cwd(), 'products.json');
 
-export async function getProducts() {
+export async function getProducts(): Promise<Product[]> {
   const filePath = getFilePath();
   if (!fs.existsSync(filePath)) {
     // Return some default products if file doesn't exist
-    const defaultProducts = [
+    const defaultProducts: Product[] = [
       {
         id: "p1",
         title: "Portable Car Vacuum Cleaner",
