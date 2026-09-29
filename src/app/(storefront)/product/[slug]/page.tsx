@@ -2,11 +2,13 @@ import Link from "next/link";
 import { getProducts } from "@/app/actions";
 import { notFound } from "next/navigation";
 import type { ProductSpecification } from "@/types/product";
+import { AddToCartButton, WishlistButton } from "@/components/ShopButtons";
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   // Fetch real products from our JSON DB and find by ID (slug)
   const allProducts = await getProducts();
-  const product = allProducts.find((p) => p.id === params.slug);
+  const product = allProducts.find((p) => p.id === slug);
   
   if (!product) {
     notFound();
@@ -21,6 +23,14 @@ export default async function ProductPage({ params }: { params: { slug: string }
   const discount = product.originalPrice && product.originalPrice > product.price 
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+
+  const cartItem = {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    originalPrice: product.originalPrice,
+  };
 
   return (
     <div className="bg-white min-h-screen pb-24 md:pb-10">
@@ -46,7 +56,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
           
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="aspect-square bg-gray-100 rounded-3xl overflow-hidden border border-gray-200">
+            <div className="relative aspect-square bg-gray-100 rounded-3xl overflow-hidden border border-gray-200">
+              <WishlistButton product={cartItem} className="absolute top-4 right-4 w-11 h-11 text-2xl" />
               <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
             </div>
             <div className="grid grid-cols-4 gap-4">
@@ -112,12 +123,12 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
             {/* Action Buttons (Desktop) */}
             <div className="hidden md:flex mt-10 space-x-4">
-              <Link href="/cart" className="flex-1 bg-white text-indigo-600 border-2 border-indigo-600 py-4 rounded-full font-bold text-lg hover:bg-indigo-50 transition-colors text-center">
+              <AddToCartButton product={cartItem} className="flex-1 bg-white text-indigo-600 border-2 border-indigo-600 py-4 rounded-full font-bold text-lg hover:bg-indigo-50 transition-colors text-center">
                 Add to Cart
-              </Link>
-              <Link href="/checkout" className="flex-1 bg-indigo-600 text-white py-4 rounded-full font-bold text-lg hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 transition-all text-center">
+              </AddToCartButton>
+              <AddToCartButton product={cartItem} redirectTo="/checkout" className="flex-1 bg-indigo-600 text-white py-4 rounded-full font-bold text-lg hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 transition-all text-center">
                 Buy Now
-              </Link>
+              </AddToCartButton>
             </div>
           </div>
         </div>
@@ -138,12 +149,12 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
       {/* Mobile Sticky Action Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50 flex space-x-3">
-        <Link href="/cart" className="w-1/3 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full font-bold">
-          <span className="text-xl">🛒</span>
-        </Link>
-        <Link href="/checkout" className="w-2/3 flex items-center justify-center bg-indigo-600 text-white py-3 rounded-full font-bold text-lg shadow-lg shadow-indigo-500/30">
+        <AddToCartButton product={cartItem} addedLabel={<span className="text-xl">✓</span>} className="w-1/3 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-full font-bold">
+          <span className="text-xl">🛒 +</span>
+        </AddToCartButton>
+        <AddToCartButton product={cartItem} redirectTo="/checkout" className="w-2/3 flex items-center justify-center bg-indigo-600 text-white py-3 rounded-full font-bold text-lg shadow-lg shadow-indigo-500/30">
           Buy Now
-        </Link>
+        </AddToCartButton>
       </div>
 
     </div>

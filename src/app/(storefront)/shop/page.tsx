@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProducts } from "@/app/actions";
+import { WishlistButton } from "@/components/ShopButtons";
 import type { Product } from "@/types/product";
 
 export default async function ShopPage() {
@@ -54,6 +55,10 @@ export default async function ShopPage() {
           {allProducts.map((product: Product) => (
             <Link key={product.id} href={`/product/${product.id}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 border border-gray-100">
               <div className="relative aspect-square overflow-hidden bg-gray-100">
+                <WishlistButton
+                  product={{ id: product.id, title: product.title, price: product.price, image: product.image, originalPrice: product.originalPrice }}
+                  className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-9 sm:h-9 text-lg sm:text-xl"
+                />
                 <img 
                   src={product.image} 
                   alt={product.title} 
