@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProducts } from "@/app/actions";
+import type { Product } from "@/types/product";
 
 export default async function ShopPage() {
   // Fetch real products from our JSON DB
@@ -50,7 +51,7 @@ export default async function ShopPage() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {allProducts.map((product) => (
+          {allProducts.map((product: Product) => (
             <Link key={product.id} href={`/product/${product.id}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 border border-gray-100">
               <div className="relative aspect-square overflow-hidden bg-gray-100">
                 <img 
