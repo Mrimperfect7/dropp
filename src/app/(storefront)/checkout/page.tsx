@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { clearCart, useShop } from "@/lib/shop-store";
 
 export default function CheckoutPage() {
-  const router = useRouter();
+  const { cart, subtotal, shipping, total } = useShop();
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -18,10 +19,9 @@ export default function CheckoutPage() {
     pincode: ""
   });
 
-  const total = 3097; // Dummy total from Cart
-
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
+    if (cart.length === 0) return;
     setIsProcessing(true);
     
     // Store Owner's WhatsApp Number (Include country code, no +)
@@ -31,9 +31,10 @@ export default function CheckoutPage() {
     const message = `*NEW ORDER RECEIVED!* 🛒
     
 *Items:*
-1x Portable Car Vacuum Cleaner
-2x Ergonomic Laptop Stand
+${cart.map((item) => `${item.quantity}x ${item.title} (₹${item.price * item.quantity})`).join("\n")}
 
+*Subtotal:* ₹${subtotal}
+*Shipping:* ${shipping === 0 ? "Free" : `₹${shipping}`}
 *Total Amount:* ₹${total}
 *Payment Preference:* ${paymentMethod.toUpperCase()}
 
@@ -53,8 +54,22 @@ Please confirm my order!`;
     const whatsappUrl = `https://wa.me/${storeWhatsappNumber}?text=${encodedMessage}`;
     
     // Redirect to WhatsApp
+    clearCart();
     window.location.href = whatsappUrl;
   };
+
+  if (cart.length === 0 && !isProcessing) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+        <div className="text-6xl mb-6">🛒</div>
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Your cart is empty</h1>
+        <p className="mt-3 text-gray-500">Add some products before checking out.</p>
+        <Link href="/shop" className="mt-8 inline-block px-8 py-3 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-colors">
+          Start Shopping
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -151,39 +166,32 @@ Please confirm my order!`;
             <h2 className="text-xl font-black text-gray-900 mb-6">Order Summary</h2>
             
             <div className="space-y-4 mb-6">
-              {/* Dummy Item 1 */}
-              <div className="flex items-start">
-                <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                  <img src="https://images.unsplash.com/photo-1621252179027-94459d278660?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover" alt="" />
+              {cart.map((item) => (
+                <div key={item.id} className="flex items-start">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                    <img src={item.image} className="w-full h-full object-cover" alt="" />
+                  </div>
+                  <div className="ml-4 flex-1">
+                    <h4 className="text-sm font-bold text-gray-900 line-clamp-1">{item.title}</h4>
+                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                    <p className="text-sm font-bold text-gray-900 mt-1">₹{item.price * item.quantity}</p>
+                  </div>
                 </div>
-                <div className="ml-4 flex-1">
-                  <h4 className="text-sm font-bold text-gray-900 line-clamp-1">Portable Car Vacuum...</h4>
-                  <p className="text-sm text-gray-500">Qty: 1</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">₹1299</p>
-                </div>
-              </div>
-              
-              {/* Dummy Item 2 */}
-              <div className="flex items-start">
-                <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                  <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?q=80&w=2067&auto=format&fit=crop" className="w-full h-full object-cover" alt="" />
-                </div>
-                <div className="ml-4 flex-1">
-                  <h4 className="text-sm font-bold text-gray-900 line-clamp-1">Ergonomic Laptop Stand</h4>
-                  <p className="text-sm text-gray-500">Qty: 2</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">₹1798</p>
-                </div>
-              </div>
+              ))}
             </div>
             
             <div className="border-t border-gray-200 pt-4 space-y-3 text-sm font-medium">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>₹3097</span>
+                <span>₹{subtotal}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
-                <span className="text-green-600 font-bold">Free</span>
+                {shipping === 0 ? (
+                  <span className="text-green-600 font-bold">Free</span>
+                ) : (
+                  <span>₹{shipping}</span>
+                )}
               </div>
             </div>
             

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AddToCartButton, WishlistButton } from "@/components/ShopButtons";
 
 const dealProducts = [
   {
@@ -93,6 +94,7 @@ export default function DealsPage() {
                     alt={product.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <WishlistButton product={product} className="absolute top-4 right-4 w-9 h-9 text-xl" />
                   <div className="absolute top-4 left-4">
                     <span className="bg-red-600 text-white text-xs sm:text-sm font-bold px-3 py-1.5 rounded-full shadow-md shadow-red-600/30">
                       {discountPercent}% OFF
@@ -118,9 +120,9 @@ export default function DealsPage() {
                       <span className="text-xl sm:text-2xl font-black text-red-600">₹{product.price}</span>
                       <div className="text-sm text-gray-400 line-through font-medium">₹{product.originalPrice}</div>
                     </div>
-                    <Link href="/cart" className="w-10 h-10 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-full flex items-center justify-center transition-colors">
+                    <AddToCartButton product={product} addedLabel={<span className="text-lg font-bold">✓</span>} className="w-10 h-10 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-full flex items-center justify-center transition-colors">
                       <span className="text-xl font-bold">+</span>
-                    </Link>
+                    </AddToCartButton>
                   </div>
                 </div>
                 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { CartBadge, WishlistBadge } from "@/components/ShopButtons";
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   return (
@@ -41,13 +42,8 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
               <Link href="/ai-shopping" className="hidden lg:flex items-center space-x-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold hover:bg-indigo-100 transition-colors">
                 <span>✨ Ask AI</span>
               </Link>
-              <Link href="/wishlist" className="text-gray-500 hover:text-indigo-600 transition-colors">
-                <span className="text-xl">❤️</span>
-              </Link>
-              <Link href="/cart" className="relative text-gray-500 hover:text-indigo-600 transition-colors">
-                <span className="text-xl">🛒</span>
-                <span className="absolute -top-1 -right-2 bg-indigo-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">2</span>
-              </Link>
+              <WishlistBadge />
+              <CartBadge />
               <Link href="/account" className="hidden sm:block text-gray-500 hover:text-indigo-600 transition-colors">
                 <span className="text-xl">👤</span>
               </Link>
